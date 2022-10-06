@@ -1,2 +1,4 @@
-# probable-waffle
-Design Patterns
+# Design Pattern
+
+### SOLID
+Single Responsibility Principle (SRR)
