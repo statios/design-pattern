@@ -279,3 +279,114 @@ var blackCatBuilder = BlackCatBuilder()
 catDirector.setBigCat(builder: blackCatBuilder)
 var cat = blackCatBuilder.build() // 100cm, 100kg, black
 ```
+### Singleton Pattern
+프로세스가 실행 중에 오직 하나의 object만 생성되도록 강제하는 디자인 패턴입니다.
+```swift
+class Cat {
+    static let shared = Cat()
+    private init() { }
+}
+```
+### Prototype Pattern
+일반적인 `Cat` class를 정의하고 `name`만 다른 두 객체를 생성하려고 합니다.
+#### 🙅‍♂️ 단순 생성하여 속성을 하나하나 지정하는 경우
+```swift
+class Cat {
+    var color: String?
+    var eyeColor: String?
+    var noseColor: String?
+    var tailColor: String?
+    var name: String?
+}
+
+var kitty = Cat()
+kitty.color = "white"
+kitty.eyeColor = "white"
+kitty.noseColor = "white"
+kitty.tailColor = "white"
+kitty.name = "kitty"
+
+var nabi = Cat()
+nabi.color = "white"
+nabi.eyeColor = "white"
+nabi.noseColor = "white"
+nabi.tailColor = "white"
+nabi.name = "nabi"
+```
+#### 🙅‍♂️ 단순 복사하는 경우
+```swift
+class Cat {
+    var color: String?
+    var eyeColor: String?
+    var noseColor: String?
+    var tailColor: String?
+    var name: String?
+
+    func clone() -> Cat {
+        let newCat = Cat()
+        newCat.color = self.color
+        newCat.eyeColor = self.eyeColor
+        newCat.noseColor = self.noseColor
+        newCat.tailColor = self.tailColor
+        newCat.name = self.name
+        return newCat
+    }
+}
+
+var kitty = Cat()
+kitty.color = "white"
+kitty.eyeColor = "white"
+kitty.noseColor = "white"
+kitty.tailColor = "white"
+kitty.name = "kitty"
+
+var nabi = kitty.clone()
+nabi.name = "nabi"
+```
+#### 🙆‍♂️ 프로토타입을 이용하는 경우
+```swift
+
+class Cat {
+    var color: String?
+    var eyeColor: String?
+    var noseColor: String?
+    var tailColor: String?
+    var name: String?
+
+    func clone() -> Cat {
+        let newCat = Cat()
+        newCat.color = self.color
+        newCat.eyeColor = self.eyeColor
+        newCat.noseColor = self.noseColor
+        newCat.tailColor = self.tailColor
+        newCat.name = self.name
+        return newCat
+    }
+}
+
+class BlackCat: Cat {
+    override init() {
+        super.init()
+        self.color = "black"
+    }
+}
+
+class WhiteCat: Cat {
+    override init() {
+        super.init()
+        self.color = "black"
+    }
+}
+
+var blackCat = BlackCat()
+blackCat.noseColor = "pink"
+blackCat.tailColor = "green" // 'blackCat' is prototype
+
+var kitty = blackCat.clone()
+kitty.eyeColor = "white"
+kitty.name = "kitty"
+
+var nabi = blackCat.clone()
+nabi.eyeColor = "blue"
+nabi.name = "nabi"
+```
