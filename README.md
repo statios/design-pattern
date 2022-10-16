@@ -194,3 +194,88 @@ class DarkUIFactory: UIFactory {
     func getScrollBar() -> ScrollBar { return DarkScrollBar() }
 }
 ```
+### Builder Pattern
+object의 생성 과정에 많은 argument가 필요하다거나 복잡할 때 이를 간단하게 만들 수 있습니다. builder의 각 setter 메서드에서 자기 자신인 builder를 리턴하도록 하면 체인 형태로 사용할 수도 있습니다.
+![1920px-Builder_UML_class_diagram svg](https://user-images.githubusercontent.com/42381560/196039602-86858d4d-2fb7-449d-826c-8309f664a2f2.png)
+```swift
+class Cat {
+
+    var height: Float
+    var weight: Float
+    var color: UIColor
+
+    init(height: Float, weight: Float, color: UIColor) {
+        self.height = height
+        self.weight = weight
+        self.color = color
+    }
+}
+
+class CatBuilder {
+    var height: Float = .zero
+    var weight: Float = .zero
+    var color: UIColor = .white
+
+    func setHeight(_ h: Float) -> CatBuilder {
+        self.height = h
+        return self
+    }
+
+    func setWeight(_ w: Float) -> CatBuilder {
+        self.weight = w
+        return self
+    }
+
+    func setColor(_ c: UIColor) -> CatBuilder {
+        self.color = c
+        return self
+    }
+
+    func build() -> Cat {
+        return Cat(height: height, weight: weight, color: color)
+    }
+}
+
+var cat = CatBuilder()
+    .setHeight(20)
+    .setWeight(10)
+    .setColor(.green)
+    .build()
+```
+Builder 클래스를 상속하여 specific한 builder를 정의할 수 있습니다.
+```swift
+class WhiteCatBuilder: CatBuilder {
+    override init() {
+        super.init()
+        self.color = .white
+    }
+}
+
+class BlackCatBuilder: CatBuilder {
+    override init() {
+        super.init()
+        self.color = .black
+    }
+}
+```
+필수는 아니지만 빌더를 세팅해 주는 목적의 Director를 정의할 수 있습니다.
+```swift
+class CatDirector {
+    func setSamllCat(builder: CatBuilder) {
+        builder
+            .setWeight(5)
+            .setHeight(5)
+    }
+
+    func setBigCat(builder: CatBuilder) {
+        builder
+            .setWeight(100)
+            .setHeight(100)
+    }
+}
+
+var catDirector = CatDirector()
+var blackCatBuilder = BlackCatBuilder()
+catDirector.setBigCat(builder: blackCatBuilder)
+var cat = blackCatBuilder.build() // 100cm, 100kg, black
+```
