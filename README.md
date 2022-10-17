@@ -503,3 +503,53 @@ var kittyProxy = CatProxy(cat: kitty)
 
 doSpeak(animal: kittyProxy)
 ```
+### Facade Pattern
+*facade: 건물의 정면*
+
+퍼사드 패턴은 건물의 정면처럼 복잡한 부분은 뒤쪽에 숨겨두고 간단한 부분만 보여주는 패턴입니다. 3단 추진 로켓을 퍼사드로 표현한 예제입니다.
+```swift
+class Stage1 {
+    func ignite() { print("1st stage ignition") }
+    func liftOff() { print("1st stage liftOff") }
+    func eject() { print("1st stage ejection") }
+    func comeBack() { print("1st stage return") }
+}
+
+class Stage2 {
+    func ignite() { print("2st stage ignition") }
+    func liftOff() { print("2st stage liftOff") }
+    func eject() { print("2st stage ejection") }
+    func comeBack() { print("2st stage return") }
+}
+
+class Capsule {
+
+    func ignite() { print("capsule ignition") }
+
+    func landing() { print("capsule landing/deploy") }
+
+}
+
+class Rocket { // Facade
+
+    var stage1 = Stage1()
+    var stage2 = Stage2()
+    var capsule = Capsule()
+
+    func launch() {
+        self.stage1.ignite()
+        self.stage1.liftOff()
+        self.stage1.eject()
+        self.stage2.ignite()
+        self.stage1.comeBack()
+        self.stage2.eject()
+        self.capsule.ignite()
+        self.capsule.landing()
+    }
+
+}
+
+// Usage
+var rocket = Rocket()
+rocket.launch()
+```
