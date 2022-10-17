@@ -390,3 +390,54 @@ var nabi = blackCat.clone()
 nabi.eyeColor = "blue"
 nabi.name = "nabi"
 ```
+## Structural Design Pattern
+### Adapter Pattern
+하나의 인터페이스를 다른 인터페이스로 전환하는 패턴입니다. Wrapper라고 부르기도 합니다.
+```swift
+protocol Animal {
+    func walk()
+}
+
+class Cat: Animal {
+    func walk() { print("cat walking") }
+}
+
+class Dog: Animal {
+    func walk() { print("dog walking") }
+}
+
+func makeWalk(animal: Animal) {
+    animal.walk()
+}
+
+var kitty = Cat()
+var bingo = Dog()
+
+makeWalk(animal: kitty) //"cat walking"
+makeWalk(animal: bingo) //"dog walking"
+```
+```swift
+class Fish { // fish doesn't have a walk method
+    func swim() {
+        print("fish swimming")
+    }
+}
+
+var nemo = Fish()
+
+//makeWalk(animal: nemo) ❌
+```
+```swift
+class FishAdapter: Animal {
+    var fish: Fish
+
+    init(fish: Fish) {
+        self.fish = fish
+    }
+
+    func walk() { self.fish.swim() }
+}
+
+var adaptedNemo = FishAdapter(fish: nemo)
+makeWalk(animal: adaptedNemo)
+```
