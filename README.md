@@ -441,3 +441,65 @@ class FishAdapter: Animal {
 var adaptedNemo = FishAdapter(fish: nemo)
 makeWalk(animal: adaptedNemo)
 ```
+### Proxy Pattern
+서버의 예를 들어보겠습니다. 서버를 구성할 때 Client와 Server사이에 Proxy 서버를 두는 것이 일반적입니다. Proxy 서버는 Server와 커뮤니케이션 하면서 클라이언트에 Response를 전달하는 기능 외에도 그 목적에 따라 로그나 통계 기능을 가지는 경우도 있습니다. 혹은 프록시 뒤에 있는 서버단의 부하를 줄이기 위해서 Request에 대한 Response를 캐시로 가지고 있기도 합니다.
+
+이처럼 Client 코드가 있고 사용하기를 원하는 Object가 있을 때 Object에 직접 접근하지 않고 Proxy를 두고 Client는 Proxy를 통해서만 Object의 기능을 사용하는 패턴입니다.
+```swift
+class Cat {
+    func speak() { print("meow") }
+}
+
+var kitty = Cat()
+kitty.speak()
+
+class CatProxy {
+
+    var cat: Cat
+
+    init(cat: Cat) { self.cat = cat}
+
+    func speak() {
+        print("willSpeak") // validity checks, lazy init, more
+        self.cat.speak()
+        print("didSpeak") // loggings
+    }
+}
+
+var kittyProxy = CatProxy(cat: kitty)
+kittyProxy.speak()
+```
+프록시가 대상 오브젝트를 상속받거나 같은 프로토콜을 따르는 식으로 구성하는 것도 가능합니다.
+```swift
+protocol Animal {
+    func speak()
+}
+
+class Cat: Animal {
+    func speak() { print("meow") }
+}
+
+class CatProxy: Animal {
+
+    var cat: Cat
+
+    init(cat: Cat) {
+        self.cat = cat
+    }
+
+    func speak() {
+        print("bofore speak")
+        self.cat.speak()
+        print("after speak")
+    }
+}
+
+func doSpeak(animal: Animal) {
+    animal.speak()
+}
+
+var kitty = Cat()
+var kittyProxy = CatProxy(cat: kitty)
+
+doSpeak(animal: kittyProxy)
+```
