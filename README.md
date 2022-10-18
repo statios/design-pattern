@@ -553,3 +553,64 @@ class Rocket { // Facade
 var rocket = Rocket()
 rocket.launch()
 ```
+### Decorator Pattern
+서브클래싱 하지 않고 기능을 확장하는 패턴
+<img width="581" alt="image" src="https://user-images.githubusercontent.com/42381560/196468950-aa12d1ca-9a82-4d6a-b35d-c33839d1541c.png">
+```swift
+protocol Animal {
+    var sound: String { get }
+}
+
+class Dog: Animal {
+    var sound: String {
+        return "bark"
+    }
+}
+
+class Cat: Animal {
+    var sound: String {
+        return "meow"
+    }
+}
+
+class AnimalDecorator: Animal {
+
+    var animal: Animal
+
+    var sound: String {
+        return animal.sound
+    }
+
+    init(animal: Animal) {
+        self.animal = animal
+    }
+
+}
+
+func makeSpeak(animal: Animal) {
+    print(animal.sound)
+}
+
+class AnimalSmileDecorator: AnimalDecorator {
+    override var sound: String {
+        return "\(super.sound) 😄"
+    }
+}
+
+class AnimalCryingDecorator: AnimalDecorator {
+    override var sound: String {
+        return "\(super.sound) 😭"
+    }
+}
+
+// Usage
+
+var kitty = Cat()
+makeSpeak(animal: kitty) // "meow"
+
+var kittySmile = AnimalSmileDecorator(animal: kitty)
+makeSpeak(animal: kittySmile) // "meow 😄"
+
+var kittySmileCrying = AnimalCryingDecorator(animal: kittySmile)
+makeSpeak(animal: kittySmileCrying) // "meow 😄 😭"
+```
