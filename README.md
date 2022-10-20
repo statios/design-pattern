@@ -614,3 +614,78 @@ makeSpeak(animal: kittySmile) // "meow 😄"
 var kittySmileCrying = AnimalCryingDecorator(animal: kittySmile)
 makeSpeak(animal: kittySmileCrying) // "meow 😄 😭"
 ```
+### Bridge Pattern
+브릿지 패턴은 *abstraction*과 *implementation*사이에 다리를 두어 *independently*하게 만듭니다.
+```mermaid
+classDiagram
+    class Animal
+    <<protocol>> Animal
+    Animal : +String name
+    Animal <|-- Cat
+    Animal <|-- Dog
+    Animal o-- Vehicle
+
+    class Vehicle
+    Vehicle : +Animal animal
+    Vehicle : +init(Animal)
+    Vehicle : +start()
+    Vehicle <|-- Car
+    Vehicle <|-- Boat
+    Vehicle <|-- Airplane
+```
+```swift
+protocol Animal {
+    var name: String { get }
+}
+
+class Cat: Animal {
+    var name: String { "cat" }
+}
+
+class Dog: Animal {
+    var name: String { "dog" }
+}
+
+class Vehicle {
+    
+    var animal: Animal
+    
+    init(animal: Animal) {
+        self.animal = animal
+    }
+    
+    func start() { }
+}
+
+class Car: Vehicle {
+    
+    override func start() {
+        print("\(animal.name) drives a car")
+    }
+    
+}
+
+class Boat: Vehicle {
+    
+    override func start() {
+        print("\(animal.name) sails a boat")
+    }
+    
+}
+
+class Airplane: Vehicle {
+    
+    override func start() {
+        print("\(animal.name) flies a plane")
+    }
+    
+}
+
+let cat = Cat()
+let boat = Boat(animal: cat)
+boat.start() // cat sales a boat
+
+let dog = Dog()
+let car = Car(animal: dog)
+car.start() // dog drives a car
+```
