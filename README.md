@@ -689,3 +689,5 @@ let dog = Dog()
 let car = Car(animal: dog)
 car.start() // dog drives a car
 ```
+이 예시에서 *abstraction*과 *implementation*에 해당 하는 것은 `Vehicle`과 `Animal`입니다.
+브릿지 패턴에서 abstraction이란 상대적으로 더 추상적인 관념인 고수준(high level) 레이어를 생각하면 됩니다. 그리고 implementation은 실제 구현 코드라고 생각하면 됩니다. 따라서 client는 `Vehicle`과 같은 abstraction 레이어만 볼 수 있는 것이고, 내부의 실제 implementation은 바깥에서 숨길 수 있는 구조를 만들 수 있습니다. 이처럼 바깥에서 보여지는 레이어와 내부 구현을 분리하는 패턴입니다. 다른 예시를 하나더 살펴봅니다.
