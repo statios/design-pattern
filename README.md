@@ -742,3 +742,126 @@ class Sedan: Car {
     }
 }
 ```
+### Flyweight Pattern
+다수의 Object를 사용할 때 공통된 데이터를 공유하여 메모리 사용량을 줄여주는 패턴입니다.
+```swift
+class Dog: CustomStringConvertible {
+
+    var name: String
+    var age: Int
+    var gender: String
+    var breed: String
+    var DNA: String
+
+    init(name: String, age: Int, gender: String, breed: String, DNA: String) {
+        self.name = name
+        self.age = age
+        self.gender = gender
+        self.breed = breed
+        self.DNA = DNA
+    }
+
+    var description: String {
+        return "\(name), \(age), \(DNA)"
+    }
+
+}
+
+var choco = Dog(name: "choco", age: 2, gender: "male", breed: "shihTzu", DNA: "ATAGGCTTACCGATGG...")
+var baduk = Dog(name: "baduk", age: 3, gender: "female", breed: "jindo", DNA: "ATAGGCTTACCGATGG...")
+
+print(choco) // choco, 2, ATAGGCTTACCGATGG...
+print(baduk) // baduk, 3, ATAGGCTTACCGATGG...
+```
+강아지를 표현하는 여러 속성이 있습니다. 그중에 DNA는 저장해야 할 정보가 많아서 메모리 사용량이 아주 큰 프로퍼티 입니다. 그래서 Dog 인스턴스를 생성할 때마다 DNA를 저장하기 위해서 메모리를 많이 잡아먹게 됩니다. 하지만 모든 강아지는 동일한 DNA를 가지므로(실제로는 그렇지 않지만) 각각의 강아지가 DNA 정보를 공유할 수 있다면 메모리를 절약할 수 있습니다.
+```swift
+class Dog: CustomStringConvertible {
+
+    static let DNASeq = "ATAGGCTTACCGATGG..."
+
+    var name: String
+    var age: Int
+    var gender: String
+    var breed: String
+    var DNA: String {
+        return Dog.DNASeq
+    }
+
+    init(name: String, age: Int, gender: String, breed: String) {
+        self.name = name
+        self.age = age
+        self.gender = gender
+        self.breed = breed
+    }
+
+    var description: String {
+        return "\(name), \(age), \(DNA)"
+    }
+
+}
+
+var choco = Dog(name: "choco", age: 2, gender: "male", breed: "shihTzu")
+var baduk = Dog(name: "baduk", age: 3, gender: "female", breed: "jindo")
+
+print(choco) // choco, 2, ATAGGCTTACCGATGG...
+print(baduk) // baduk, 3, ATAGGCTTACCGATGG...
+```
+DNA 변수를 static으로 정의하여 모든 Dog 객체가 공유하도록 했습니다. 이러면 모든 강아지마다 DNA 정보를 직접 저장하지 않게되어 메모리 사용을 줄일 수 있습니다.  
+조금더 일반적인 예시를 알아보겠습니다. 이번에는 강아지가 각 종(breed)마다 고유한 DNA를 가진다고 가정합니다. breed와 DNA를 저장하는 타입을 하나 정의하고 이 타입의 값을 저장하는 테이블을 통해서 강아지마다 자신의 종에 해당하는 DNA를 매핑할 수 있도록 했습니다.
+```swift
+class DogBreedDNA: CustomStringConvertible {
+
+    var breed: String
+
+    var DNA: String
+
+    init(breed: String, DNA: String) {
+        self.breed = breed
+        self.DNA = DNA
+    }
+
+    var description: String {
+        return DNA
+    }
+}
+
+class Dog: CustomStringConvertible {
+
+    static var DNATable: [String: DogBreedDNA] = [:]
+
+    static func addDNA(breed: String, DNA: String) {
+        Dog.DNATable[breed] = DogBreedDNA(breed: breed, DNA: DNA)
+    }
+
+    var name: String
+    var age: Int
+    var gender: String
+    var breed: String
+
+    init(name: String, age: Int, gender: String, breed: String) {
+        self.name = name
+        self.age = age
+        self.gender = gender
+        self.breed = breed
+        if Dog.DNATable[breed] == nil {
+            fatalError("\(breed) is not in DNATable")
+        }
+    }
+
+    var description: String {
+        return "\(name), \(age), \(Dog.DNATable[breed])"
+    }
+
+}
+
+Dog.addDNA(breed: "shihTzu", DNA: "ATAGGCTTACCGATGG...")
+Dog.addDNA(breed: "jinDo", DNA: "ATAGGCTTACCGATGA...")
+
+var choco = Dog(name: "choco", age: 2, gender: "male", breed: "shihTzu")
+var baduk = Dog(name: "baduk", age: 3, gender: "female", breed: "jinDo")
+
+print(choco) // choco, 2, ATAGGCTTACCGATGG...
+print(baduk) // baduk, 3, ATAGGCTTACCGATGG...
+
+var bbobbi = Dog(name: "bbobbi", age: 1, gender: "female", breed: "shiba") // Fatal error: shiba is not in DNATable
+```
