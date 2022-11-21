@@ -865,3 +865,49 @@ print(baduk) // baduk, 3, ATAGGCTTACCGATGG...
 
 var bbobbi = Dog(name: "bbobbi", age: 1, gender: "female", breed: "shiba") // Fatal error: shiba is not in DNATable
 ```
+### Composite Pattern
+한 Object의 그룹과 그 Object의 Single Instance가 같은 타입으로 취급되는 패턴입니다. 또한 Composite Pattern을 통해서 Object들을 트리 구조로 구성할 수 있습니다.
+<img width="1079" alt="image" src="https://user-images.githubusercontent.com/42381560/203128722-dd62e7e1-ffde-498e-a78f-c90613d4e8aa.png">
+```swift
+protocol Component {
+    func operation()
+}
+
+class Leaf: Component {
+    func operation() {
+        print("Leaf|")
+    }
+}
+
+class Composite: Component {
+
+    private(set) var components = [Component]()
+
+    func operation() {
+        print("Composite|")
+        components.forEach { component in
+            component.operation()
+        }
+    }
+
+    func add(_ component: Component) {
+        components.append(component)
+    }
+}
+
+var composite1 = Composite()
+composite1.add(Leaf())
+composite1.add(Leaf())
+
+var composite0 = Composite()
+composite0.add(Leaf())
+composite0.add(composite1)
+
+composite0.operation()
+//Composite|
+//Leaf|
+//Composite|
+//Leaf|
+//Leaf|
+```
+예시에서 알 수 있듯이 컴포지트 패턴은 그룹과 오브젝트가 같은 인터페이스를 제공함으로써 루트에서 시작되는 함수 콜이 트리 안에 있는 모든 오브젝트로 함수 콜이 퍼지는 구조입니다.
