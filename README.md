@@ -911,3 +911,42 @@ composite0.operation()
 //Leaf|
 ```
 예시에서 알 수 있듯이 컴포지트 패턴은 그룹과 오브젝트가 같은 인터페이스를 제공함으로써 루트에서 시작되는 함수 콜이 트리 안에 있는 모든 오브젝트로 함수 콜이 퍼지는 구조입니다.
+## Behavioral Design Pattern
+### Strategy Pattern
+런타임에 실제 실행될 알고리즘이 결정될 수 있도록 합니다. (OCP)
+```swift
+protocol Animal {
+    func speak()
+}
+
+class Cat: Animal {
+    func speak() {
+        print("meow")
+    }
+}
+
+class Lion: Animal {
+    func speak() {
+        print("roar")
+    }
+}
+
+
+func makeSpaek(animal: Animal?) {
+    animal?.speak()
+}
+
+func createAnimal(inputString: String?) -> Animal? {
+    if inputString == "cat" {
+        return Cat()
+    }
+    else if inputString == "lion" {
+        return Lion()
+    }
+    return nil
+}
+
+var inputString = readLine()
+var animal = createAnimal(inputString: inputString)
+makeSpaek(animal: animal)
+```
