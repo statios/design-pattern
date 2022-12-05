@@ -950,3 +950,57 @@ var inputString = readLine()
 var animal = createAnimal(inputString: inputString)
 makeSpaek(animal: animal)
 ```
+### State Pattern
+초록불 또는 빨간불 중에 하나의 상태를 가지는 신호등을 State Pattern을 사용하여 표현해 봅니다.
+```swift
+class TrafficLight {
+    
+    var state: TrafficLightState = GreenLight()
+    
+    func setState(_ newState: TrafficLightState) {
+        self.state = newState
+    }
+    
+    func speak() {
+        self.state.status()
+    }
+    
+    func wait() {
+        self.state.changeLight(trafficLight: self)
+    }
+}
+
+protocol TrafficLightState {
+    func status()
+    func changeLight(trafficLight: TrafficLight)
+}
+
+class GreenLight: TrafficLightState {
+    func status() {
+        print("green light")
+    }
+    
+    func changeLight(trafficLight: TrafficLight) {
+        print("wait.. the light changed")
+        trafficLight.setState(RedLight())
+    }
+}
+
+class RedLight: TrafficLightState {
+    func status() {
+        print("red light")
+    }
+    
+    func changeLight(trafficLight: TrafficLight) {
+        print("wait.. the light changed")
+        trafficLight.setState(GreenLight())
+    }
+}
+
+var trafficLight = TrafficLight()
+trafficLight.speak() //green light
+trafficLight.wait() //wait.. the light changed
+trafficLight.speak() //red light
+```
+**Strategy Pattern 과 차이점?**
+위의 Strategy Pattern 예시에서 `Cat`과 `Lion`은 서로의 존재를 알지 못합니다. 하지만 State Pattern에서 `GreenLight`와 `RedLight`는 `changeLight` 함수의 구현에서 보이는 것처럼 자신을 제외한 나머지 상태에 대해서도 알고 있어야 합니다. 또한 `setState` 함수를 호출하기 위해서 `TrafficLight` 객체에 접근하고 있습니다. 이렇게 자기 자신인 State를 소유하는 객체에 대해서 알아야 한다는 점 또한 Strategy Pattern과 차이를 보입니다.
