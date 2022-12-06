@@ -1004,3 +1004,76 @@ trafficLight.speak() //red light
 ```
 **Strategy Pattern 과 차이점?**
 위의 Strategy Pattern 예시에서 `Cat`과 `Lion`은 서로의 존재를 알지 못합니다. 하지만 State Pattern에서 `GreenLight`와 `RedLight`는 `changeLight` 함수의 구현에서 보이는 것처럼 자신을 제외한 나머지 상태에 대해서도 알고 있어야 합니다. 또한 `setState` 함수를 호출하기 위해서 `TrafficLight` 객체에 접근하고 있습니다. 이렇게 자기 자신인 State를 소유하는 객체에 대해서 알아야 한다는 점 또한 Strategy Pattern과 차이를 보입니다.
+### Template Method Pattern
+base class를 통해서 템플릿 메서드를 제공합니다.
+```swift
+class BasicRamenRecipe {
+    
+    // MARK: - Template methods
+    
+    func cookRamen() {
+        self.boilWater()
+        self.addRamen()
+        self.addons()
+        self.wait()
+    }
+    
+    func boilWater() {
+        print("boil 550ml of water")
+    }
+    
+    func addRamen() {
+        print("add noodles, soup base, flakes")
+    }
+    
+    func addons() {
+        
+    }
+    
+    func wait() {
+        print("cook for 4min 30s")
+    }
+}
+
+let basicRecipe = BasicRamenRecipe()
+basicRecipe.cookRamen()
+/*
+ boil 550ml of water
+ add noodles, soup base, flakes
+ cook for 4min 30s
+ */
+
+class CustomRamenRecipe: BasicRamenRecipe {
+    override func addons() {
+        print("add onions")
+    }
+}
+
+class HangangRamenRecipe: BasicRamenRecipe {
+    override func boilWater() {
+        print("boil 1000ml of water")
+    }
+    
+    override func wait() {
+        print("cook for 10m")
+    }
+}
+
+
+let customRamenRecipe = CustomRamenRecipe()
+customRamenRecipe.cookRamen()
+/*
+ boil 550ml of water
+ add noodles, soup base, flakes
+ add onions
+ cook for 4min 30s
+ */
+
+let hangangRamenRecipe = HangangRamenRecipe()
+hangangRamenRecipe.cookRamen()
+/*
+ boil 1000ml of water
+ add noodles, soup base, flakes
+ cook for 10m
+ */
+```
