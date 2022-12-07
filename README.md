@@ -1077,3 +1077,81 @@ hangangRamenRecipe.cookRamen()
  cook for 10m
  */
 ```
+### Command Pattern
+명령을 추상화하여 class로 정의하고 객체로써 다루는 패턴입니다. 이러한 명령은 간단한 것부터 다른 object(recevier)에 action을 발생시키는 명령이 될 수도 있습니다. 이렇게 명령들을 추상화해서 좋은점은 명령들을 object 처럼 관리할 수 있고, 이러한 object들을 모아두었다가 정해진 시간에 실행시키는 등의 동작을 가능하게 해줍니다.
+
+![image](https://user-images.githubusercontent.com/42381560/206220637-e1f39be5-5cf3-44f0-997b-65e40cb0bf93.jpeg)
+```swift
+protocol Command {
+    func execute()
+}
+
+// Receiver
+class Dog {
+    
+    // actions
+    func sit() {
+        print("The dog sat down")
+    }
+    
+    func stay() {
+        print("The dog is staying")
+    }
+    
+}
+
+// Command1
+class DogCommand: Command {
+    
+    var dog: Dog
+    
+    var commands: [String]
+    
+    //prefer enum
+    init(dog: Dog, commands: [String]) {
+        self.dog = dog
+        self.commands = commands
+    }
+    
+    func execute() {
+        for command in commands {
+            if command == "sit" {
+                self.dog.sit()
+            }
+            else if command == "stay" {
+                self.dog.stay()
+            }
+        }
+    }
+}
+
+var baduk = Dog()
+var dogCommand = DogCommand(dog: baduk, commands: ["stay", "sit", "sit"])
+dogCommand.execute()
+/*
+ The dog is staying
+ The dog sat down
+ The dog sat down
+ */
+
+// Invoker (command object들을 소유하고 실행시키는 역할)
+class Invoker {
+    
+    var commands = [Command]()
+    
+    func addCommand(_ command: Command) {
+        self.commands.append(command)
+    }
+    
+    func runCommands() {
+        for command in commands {
+            command.execute()
+        }
+    }
+    
+}
+
+var invoker = Invoker()
+invoker.addCommand(dogCommand)
+invoker.runCommands()
+```
