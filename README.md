@@ -1179,3 +1179,71 @@ var invoker = Invoker()
 invoker.addCommand(dogCommand)
 invoker.runCommands()
 ```
+### Chain of Responsibility
+요청을 처리하는 여러 processing object를 체인 형태로 구성하여 적절한 object에서 처리될 수 있도록 하는 패턴입니다.
+```swift
+protocol Handler: AnyObject {
+    var nextHandler: Handler? { get set }
+    func handle(request: [String: Any])
+}
+
+class CashHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: [String: Any]) {
+        if let method = request["method"] as? String, method == "card" {
+            print("processing cash \(request["amount"]) won")
+        }
+        else {
+            print("CashHandler cannot process")
+            nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class CreditCardHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: [String: Any]) {
+        if let method = request["method"] as? String, method == "creditCard" {
+            print("processing creditCard \(request["amount"]) won")
+        }
+        else {
+            print("CreditCardHandler cannot process")
+            nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class DebitCardHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: [String: Any]) {
+        if let method = request["method"] as? String, method == "debitCard" {
+            print("processing debitCard \(request["amount"]) won")
+        }
+        else {
+            print("DebitCardHandler cannot process")
+            nextHandler?.handle(request: request)
+        }
+    }
+}
+
+let payment: [String: Any] = [
+    "method": "creditCard",
+    "amount": 10000
+]
+
+let cashHandler = CashHandler()
+let creditCardHandler = CreditCardHandler()
+let debitCardHandler = DebitCardHandler()
+
+cashHandler.nextHandler = creditCardHandler
+creditCardHandler.nextHandler = debitCardHandler
+
+cashHandler.handle(request: payment)
+/*
+ CashHandler cannot process
+ processing creditCard Optional(10000) won
+ */
+```
