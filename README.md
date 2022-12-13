@@ -1247,3 +1247,56 @@ cashHandler.handle(request: payment)
  processing creditCard Optional(10000) won
  */
 ```
+### Observer
+Observer(감시자, subscriber, listener...)는 Subject 객체를 계속 바라보고 있다가 이벤트가 발생했을 때 Observer가 반응할 수 있는 패턴입니다. 
+옵저버 패턴의 아주 기본적인 클래스 구조를 예시로 알아봅니다.
+```swift
+protocol Observer {
+    func update()
+}
+
+protocol Subject {
+    func attach(observer: Observer)
+    func notify()
+}
+
+class Cat: Observer {
+    func update() {
+        print("meow")
+    }
+}
+
+class Dog: Observer {
+    func update() {
+        print("bark")
+    }
+}
+
+class Person: Subject {
+    
+    private var observers = [Observer]()
+    
+    func attach(observer: Observer) {
+        observers.append(observer)
+    }
+    
+    func notify() {
+        observers.forEach { ob in
+            ob.update()
+        }
+    }
+    
+}
+
+let person = Person()
+let cat = Cat()
+let dog = Dog()
+
+person.attach(observer: cat)
+person.attach(observer: dog)
+person.notify()
+/*
+ meow
+ bark
+ */
+```
