@@ -1300,3 +1300,69 @@ person.notify()
  bark
  */
 ```
+### Memento
+object 상태를 메멘토(기념물, 기억하는 물건.. ex.사진) 객체로 만들어서 나중에 필요할 때 접근해서 그 당시의 상태로 복원하는 패턴입니다. object의 히스토리를 관리하고자 할 때 유용합니다.
+```swift
+class CatMemento {
+    
+    let id = UUID().uuidString
+    
+    let createdAt = Date()
+    
+    let age: Int
+    
+    let height: Int
+    
+    init(age: Int, height: Int) {
+        self.age = age
+        self.height = height
+    }
+    
+}
+
+class Cat {
+    
+    //states
+    var age: Int
+    var height: Int
+    
+    init(age: Int, height: Int) {
+        self.age = age
+        self.height = height
+    }
+    
+    func createMemento() -> CatMemento {
+        return CatMemento(age: age, height: height)
+    }
+    
+    func restore(from memento: CatMemento) {
+        self.age = memento.age
+        self.height = memento.height
+    }
+    
+    func speak() {
+        print("age: \(age), height: \(height)")
+    }
+}
+
+var catHistory = [CatMemento]()
+
+var cat = Cat(age: 0, height: 10)
+catHistory.append(cat.createMemento())
+
+cat.age = 1
+cat.height = 25
+
+catHistory.append(cat.createMemento())
+
+cat.age = 2
+cat.height = 50
+
+catHistory.append(cat.createMemento())
+
+cat.speak() //age: 2, height: 50
+
+cat.restore(from: catHistory[0])
+
+cat.speak() //age: 0, height: 10
+```
