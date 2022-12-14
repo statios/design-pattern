@@ -1366,3 +1366,98 @@ cat.restore(from: catHistory[0])
 
 cat.speak() //age: 0, height: 10
 ```
+### Mediator
+object간에 directly 커뮤니케이션 하지 않고 mediator를 통하게 하여 object(Colleague) 간의 의존성을 제거합니다.
+![Mediator_design_pattern](https://user-images.githubusercontent.com/42381560/207615650-6904f6f3-d1c3-4cef-857a-08c1bd82616a.png)
+```swift
+protocol Mediator {
+    func notify(sender: String)
+}
+
+protocol Colleague: AnyObject {
+    var mediator: Mediator? { get set }
+    func setMediator(_ mediator: Mediator)
+}
+
+extension Colleague {
+    func setMediator(_ mediator: Mediator) {
+        self.mediator = mediator
+    }
+}
+
+class Watch: Colleague {
+    
+    var mediator: Mediator?
+    
+    func alarm() {
+        print("alarm on")
+        self.mediator?.notify(sender: "AlarmOn")
+    }
+}
+
+class Light: Colleague {
+    
+    var mediator: Mediator?
+    
+    func on() {
+        print("light on")
+    }
+    
+    func off() {
+        print("light off")
+        self.mediator?.notify(sender: "LightOff")
+    }
+}
+
+class Speaker: Colleague {
+    
+    var mediator: Mediator?
+    
+    func on() {
+        print("speaker on")
+    }
+    
+    func off() {
+        print("spaker off")
+    }
+    
+}
+
+class HomeMediator: Mediator {
+    
+    let watch: Watch
+    
+    let light: Light
+    
+    let speaker: Speaker
+    
+    init(watch: Wtach, light: Light, speaker: Speaker) {
+        self.watch = watch
+        self.light = light
+        self.speaker = speaker
+    }
+    
+    func notify(sender: String) {
+        if sender == "AlarmOn" {
+            self.speaker.on()
+            self.light.on()
+        }
+        else if sender == "LightOff" {
+            self.speaker.off()
+        }
+    }
+    
+}
+
+let watch = Watch()
+let light = Light()
+let speaker = Speaker()
+
+let mediator = HomeMediator(watch: watch, light: light, speaker: speaker)
+
+watch.setMediator(mediator)
+light.setMediator(mediator)
+speaker.setMediator(mediator)
+
+watch.alarm()
+```
