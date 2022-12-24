@@ -1461,3 +1461,57 @@ speaker.setMediator(mediator)
 
 watch.alarm()
 ```
+### Visitor
+Object(Element)로부터 알고리즘을 분리하는 방법 입니다. 이러면 Object를 수정하지 않고도 새로운 오퍼레이션을 추가할 수 있으므로 OCP를 따르게 됩니다.
+
+![Visitor_design_pattern svg](https://user-images.githubusercontent.com/42381560/209426971-bfba31fc-310d-4da5-bb3a-d2ac5d1e0984.png)
+```swift
+protocol AnimalVisitor {
+    func visit(element: AnimalElement)
+}
+
+protocol AnimalElement {
+    var name: String { get }
+    var age: Int { get }
+    func accept(visitor: AnimalVisitor)
+}
+
+class NameVisitor: AnimalVisitor {
+    func visit(element: AnimalElement) {
+        print(element.name)
+    }
+}
+
+class AgeVisitor: AnimalVisitor {
+    func visit(element: AnimalElement) {
+        print(element.age)
+    }
+}
+
+class Cat: AnimalElement {
+    var age: Int
+    var name: String
+    
+    init(age: Int, name: String) {
+        self.age = age
+        self.name = name
+    }
+    
+    func speak() {
+        print("meow")
+    }
+    
+    func accept(visitor: AnimalVisitor) {
+        visitor.visit(element: self)
+    }
+}
+
+var kitty = Cat(age: 3, name: "kitty")
+kitty.speak()
+
+var nameVisitor = NameVisitor()
+kitty.accept(visitor: nameVisitor)
+
+var ageVisitor = AgeVisitor()
+kitty.accept(visitor: ageVisitor)
+```
