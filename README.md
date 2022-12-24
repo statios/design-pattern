@@ -22,6 +22,12 @@
   * [State Pattern](#state-pattern)
   * [Template Method Pattern](#template-method-pattern)
   * [Command Pattern](#command-pattern)
+  * [Chain of Responsibility](#chain-of-responsibility)
+  * [Observer](#observer)
+  * [Memento](#memento)
+  * [Mediator](#mediator)
+  * [Visitor](#visitor)
+  * [Iterator](#iterator)
 
 ## Creational Design Pattern
 ### Factory Pattern
@@ -1514,4 +1520,63 @@ kitty.accept(visitor: nameVisitor)
 
 var ageVisitor = AgeVisitor()
 kitty.accept(visitor: ageVisitor)
+```
+### Iterator
+ 여러 컨테이너들에 액세스를 가능하게 해주는 공통된 인터페이스를 제공합니다. Array, Tree 등 여러 컨테이너에 대해서 같은 Iterator 인터페이스를 가지고 동일한 알고리즘을 적용할 수 있도록 합니다. Iterator에는 여러가지가 있지만 바로 다음 데이터에 대해서만 알려주는 간단한 forward iterator를 알아보겠습니다.
+```swift
+protocol Iterator {
+    associatedtype Value
+    
+    func hasNext() -> Bool
+    func next() -> Value?
+}
+
+class ArrayIterator<E>: Iterator {
+    
+    typealias Value = E
+    
+    var container: Array<Value>
+    
+    init(container: Array<E>) {
+        self.container = container
+    }
+    
+    private var position: Int = -1
+    
+    func hasNext() -> Bool {
+        return position < container.count - 1
+    }
+    
+    func next() -> Value? {
+        guard hasNext() else { return nil }
+        position += 1
+        return container[position]
+    }
+    
+}
+
+class ArrayReverseIterator<E>: Iterator {
+    
+    typealias Value = E
+    
+    var container: Array<Value>
+    
+    init(container: Array<E>) {
+        self.container = container
+        self.position = container.count
+    }
+    
+    private var position: Int
+    
+    func hasNext() -> Bool {
+        return position - 1 >= .zero
+    }
+    
+    func next() -> Value? {
+        guard hasNext() else { return nil }
+        position -= 1
+        return container[position]
+    }
+    
+}
 ```
